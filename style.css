@@ -1,5 +1,5 @@
 /* Reset default margin and padding; ensure full-screen display */
-html,
+html, 
 body {
   margin: 0;
   padding: 0;

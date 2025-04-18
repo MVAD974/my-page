@@ -3,7 +3,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 // Resize the canvas to fill the browser window
-function resizeCanvas() {
+function resizeCanvas() { 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
