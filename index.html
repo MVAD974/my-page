@@ -10,18 +10,7 @@
       <canvas id="canvas"></canvas>
       <div id="controls">
         <div>
-          <label>
-            Gravitational Constant G:
-            <input
-              id="gInput"
-              type="range"
-              min="0.1"
-              max="10"
-              step="0.1"
-              value="1"
-            />
-            <span id="gValue">1</span>
-          </label>
+          <button id="clearBtn" title="Remove all bodies and trails from the simulation.">Clear</button>
         </div>
         <div>
           <label>
@@ -43,12 +32,12 @@
             <input
               id="massInput"
               type="range"
-              min="10"
-              max="100"
+              min="1"
+              max="1000"
               step="10"
-              value="50"
+              value="10"
             />
-            <span id="massValue">50</span>
+            <span id="massValue">10</span>
           </label>
         </div>
         <div>

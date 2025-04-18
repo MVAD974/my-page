@@ -23,20 +23,19 @@ let trailOpacity = 0.05; // Opacity for the trail effect
 let maxTrailLength = 100; // Default maximum trail length
 
 // Update simulation parameters from controls
-document.getElementById("gInput").addEventListener("input", (e) => {
-  G = parseFloat(e.target.value);
-  document.getElementById("gValue").innerText = G;
-});
-document.getElementById("timeRate").addEventListener("input", (e) => {
-  timeRate = parseFloat(e.target.value);
-  document.getElementById("timeRateValue").innerText = timeRate;
-});
-document.getElementById("massInput").addEventListener("input", (e) => {
-  document.getElementById("massValue").innerText = e.target.value;
-});
-document.getElementById("trailLength").addEventListener("input", (e) => {
-  maxTrailLength = parseInt(e.target.value); // Update maxTrailLength
-  document.getElementById("trailLengthValue").innerText = maxTrailLength;
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("clearBtn").addEventListener("click", clearSimulation);
+  document.getElementById("timeRate").addEventListener("input", (e) => {
+    timeRate = parseFloat(e.target.value);
+    document.getElementById("timeRateValue").innerText = timeRate;
+  });
+  document.getElementById("massInput").addEventListener("input", (e) => {
+    document.getElementById("massValue").innerText = e.target.value;
+  });
+  document.getElementById("trailLength").addEventListener("input", (e) => {
+    maxTrailLength = parseInt(e.target.value); // Update maxTrailLength
+    document.getElementById("trailLengthValue").innerText = maxTrailLength;
+  });
 });
 
 // Define the Body class with a futurePath property
@@ -267,6 +266,16 @@ function draw() {
   }
   // Restore context to return to screen coordinates.
   ctx.restore();
+}
+
+function clearSimulation() {
+  bodies = [];
+  previewBody = null;
+  // Optionally, add the initial sun again:
+  bodies.push(
+    new Body(canvas.width / 2, canvas.height / 2, 0, 0, 1000, "yellow")
+  );
+  draw();
 }
 
 // Main animation loop: update physics and redraw the scene
