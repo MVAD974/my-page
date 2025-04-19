@@ -184,7 +184,7 @@ function mergeBodies(bodyA, bodyB) {
 
 // Add an initial large body (e.g., a sun) at the center
 bodies.push(
-  new Body(canvas.width / 2, canvas.height / 2, 0, 0, 1000, "yellow")
+  new Body(canvas.width / 2, canvas.height / 2, 0, 0, 1000, "#ffff00")
 );
 
 // Update the simulation: compute forces and update positions of all bodies
@@ -216,6 +216,27 @@ function update() {
     body.x += body.vx * timeRate;
     body.y += body.vy * timeRate;
     body.addTrailPoint(); // Add the current position to the trail
+  }
+  
+  // Collision Detection and Merging:
+  for (let i = 0; i < bodies.length; i++) {
+    for (let j = i + 1; j < bodies.length; j++) {
+      const dx = bodies[i].x - bodies[j].x;
+      const dy = bodies[i].y - bodies[j].y;
+      const distance = Math.hypot(dx, dy);
+      if (distance < (bodies[i].radius + bodies[j].radius)) {
+        // Merge bodies[i] and bodies[j]
+        const newBody = mergeBodies(bodies[i], bodies[j]);
+        // Remove colliding bodies from the array
+        bodies.splice(j, 1);
+        bodies.splice(i, 1);
+        // Add the merged body
+        bodies.push(newBody);
+        // Restart checking for collisions since bodies array changed
+        i = -1;
+        break;
+      }
+    }
   }
 }
 
