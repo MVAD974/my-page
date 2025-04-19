@@ -23,10 +23,6 @@ let trailOpacity = 0.05; // Opacity for the trail effect
 let maxTrailLength = 100; // Default maximum trail length
 
 // Update simulation parameters from controls
-document.getElementById("gInput").addEventListener("input", (e) => {
-  G = parseFloat(e.target.value);
-  document.getElementById("gValue").innerText = G;
-});
 document.getElementById("timeRate").addEventListener("input", (e) => {
   timeRate = parseFloat(e.target.value);
   document.getElementById("timeRateValue").innerText = timeRate;
@@ -316,4 +312,30 @@ canvas.addEventListener("mouseup", (e) => {
   }
   isDragging = false;
   previewBody = null;
+});
+
+function clearSimulation() {
+  // Option 1: Clear only the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Option 2: Reset simulation state and clear canvas
+  bodies = []; 
+  previewBody = null;
+
+  // Optionally, if you want to restart with the initial body (e.g. a sun), uncomment below:
+  // bodies.push(new Body(canvas.width / 2, canvas.height / 2, 0, 0, 1000, "yellow"));
+
+  // Force a redraw to update the cleared state
+  draw();
+}
+
+// Attach event listener after DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("clearBtn").addEventListener("click", clearSimulation);
+  const menu = document.getElementById("menu");
+  const menuBtn = document.getElementById("menuBtn");
+
+  menuBtn.addEventListener("click", () => {
+    menu.classList.toggle("hidden");
+  });
 });
