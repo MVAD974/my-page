@@ -19,6 +19,10 @@ let isDragging = false; // Flag to track if the mouse is dragging
 let startX, startY; // Starting position for drag
 let baryOffsetX = 0,
   baryOffsetY = 0; // Stores the offset due to the move of the baycenter
+// Global variables for smooth barycenter animation
+let displayBarycenterX = canvas.width / 2;
+let displayBarycenterY = canvas.height / 2;
+let smoothingFactor = 0.1; // Adjust between 0 and 1 for desired smoothness (marche pas non ?)
 let trailOpacity = 0.05; // Opacity for the trail effect
 let maxTrailLength = 100; // Default maximum trail length
 
@@ -259,15 +263,19 @@ function draw() {
     barycenterX /= totalMass;
     barycenterY /= totalMass;
   }
-  // Store the barycenter for later use
-  baryOffsetX = barycenterX;
-  baryOffsetY = barycenterY;
+  // Smoothly update the display barycenter
+  displayBarycenterX += smoothingFactor * (barycenterX - displayBarycenterX);
+  displayBarycenterY += smoothingFactor * (barycenterY - displayBarycenterY);
+
+  // Store for potential further use
+  baryOffsetX = displayBarycenterX;
+  baryOffsetY = displayBarycenterY;
 
   // Save the context and translate so the barycenter is centered.
   ctx.save();
   ctx.translate(
-    canvas.width / 2 - barycenterX,
-    canvas.height / 2 - barycenterY
+    canvas.width / 2 - displayBarycenterX,
+    canvas.height / 2 - displayBarycenterY
   );
 
   // Draw simulation elements (future paths, bodies, and preview body) in world space.
