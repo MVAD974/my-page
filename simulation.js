@@ -25,6 +25,9 @@ let displayBarycenterY = canvas.height / 2;
 let smoothingFactor = 0.1; // Adjust between 0 and 1 for desired smoothness (marche pas non ?)
 let trailOpacity = 0.05; // Opacity for the trail effect
 let maxTrailLength = 100; // Default maximum trail length
+let isPaused = false; // Pause state
+let showGrid = true; // Grid toggle
+let simTime = 0; // Simulation time in seconds
 
 // Update simulation parameters from controls
 document.getElementById("timeRate").addEventListener("input", (e) => {
@@ -244,6 +247,28 @@ function update() {
   }
 }
 
+// Draw background grid
+function drawGrid(ctx, spacing = 100, color = "#222") {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 6]);
+  for (let x = -canvas.width; x < canvas.width * 2; x += spacing) {
+    ctx.beginPath();
+    ctx.moveTo(x, -canvas.height);
+    ctx.lineTo(x, canvas.height * 2);
+    ctx.stroke();
+  }
+  for (let y = -canvas.height; y < canvas.height * 2; y += spacing) {
+    ctx.beginPath();
+    ctx.moveTo(-canvas.width, y);
+    ctx.lineTo(canvas.width * 2, y);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
 // Draw the simulation scene with the trail effect and preview
 function draw() {
   // Clear the canvas with a semi-transparent rectangle for the trail effect.
@@ -278,6 +303,9 @@ function draw() {
     canvas.height / 2 - displayBarycenterY
   );
 
+  // Draw grid if enabled
+  if (showGrid) drawGrid(ctx);
+
   // Draw simulation elements (future paths, bodies, and preview body) in world space.
   for (let body of bodies) {
     body.drawFuturePath(ctx);
@@ -296,8 +324,14 @@ function draw() {
 
 // Main animation loop: update physics and redraw the scene
 function loop() {
-  update();
+  if (!isPaused) {
+    update();
+    simTime += 0.016 * timeRate; // Approximate frame time
+  }
   draw();
+  // Update stats
+  document.getElementById("bodiesCount").textContent = `Bodies: ${bodies.length}`;
+  document.getElementById("simTime").textContent = `Time: ${simTime.toFixed(1)}s`;
   requestAnimationFrame(loop);
 }
 loop();
@@ -350,6 +384,7 @@ function clearSimulation() {
   // Option 2: Reset simulation state and clear canvas
   bodies = []; 
   previewBody = null;
+  simTime = 0;
 
   // Optionally, if you want to restart with the initial body (e.g. a sun), uncomment below:
   // bodies.push(new Body(canvas.width / 2, canvas.height / 2, 0, 0, 1000, "yellow"));
@@ -366,5 +401,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   menuBtn.addEventListener("click", () => {
     menu.classList.toggle("hidden");
+  });
+  // Add event listeners for new controls
+  const pauseBtn = document.getElementById("pauseBtn");
+  pauseBtn.addEventListener("click", () => {
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? "Resume" : "Pause";
+  });
+  const gridToggle = document.getElementById("gridToggle");
+  gridToggle.addEventListener("change", (e) => {
+    showGrid = e.target.checked;
   });
 });
