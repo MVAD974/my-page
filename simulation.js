@@ -42,26 +42,69 @@ document.getElementById("trailLength").addEventListener("input", (e) => {
   document.getElementById("trailLengthValue").innerText = maxTrailLength;
 });
 
-// Define the Body class with a futurePath property
+// Enhanced Body class with velocity vector and label
 class Body {
   constructor(x, y, vx, vy, mass, color) {
-    this.x = x; // X position
-    this.y = y; // Y position
-    this.vx = vx; // Velocity in X direction
-    this.vy = vy; // Velocity in Y direction
-    this.mass = mass; // Mass of the body
-    this.color = color || "white"; // Color for drawing
-    this.radius = Math.cbrt(mass) * 2; // Visual radius based on mass
-    this.trail = []; // Array to store trail points
-    this.futurePath = []; // Array to store future path points
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.mass = mass;
+    this.color = color || "white";
+    this.radius = Math.cbrt(mass) * 2;
+    this.trail = [];
+    this.futurePath = [];
+    this.id = Math.random().toString(36).slice(2, 8); // Unique id for label
   }
 
   // Draw the body on the canvas
   draw(ctx) {
+    // Draw body
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 12;
     ctx.fill();
+    ctx.shadowBlur = 0;
+    // Draw velocity vector as an arrow if speed is big enough
+    const vScale = 40; // Make the arrow even longer
+    const speed = Math.hypot(this.vx, this.vy);
+    if (speed > 0.2) { // Only draw if velocity is significant
+      const vx = this.vx * vScale;
+      const vy = this.vy * vScale;
+      const fromX = this.x;
+      const fromY = this.y;
+      const toX = this.x + vx;
+      const toY = this.y + vy;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      ctx.lineTo(toX, toY);
+      ctx.strokeStyle = '#0ff';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // Draw arrowhead
+      const angle = Math.atan2(vy, vx);
+      const headlen = 10;
+      ctx.beginPath();
+      ctx.moveTo(toX, toY);
+      ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 7), toY - headlen * Math.sin(angle - Math.PI / 7));
+      ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 7), toY - headlen * Math.sin(angle + Math.PI / 7));
+      ctx.lineTo(toX, toY);
+      ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 7), toY - headlen * Math.sin(angle - Math.PI / 7));
+      ctx.strokeStyle = '#0ff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+    }
+    // Draw label (mass)
+    ctx.font = 'bold 13px Segoe UI, Arial';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.fillText(Math.round(this.mass), this.x, this.y - this.radius - 8);
   }
 
   // Draw the trail as a line
@@ -194,6 +237,41 @@ bodies.push(
   new Body(canvas.width / 2, canvas.height / 2, 0, 0, 1000, "#ffff00")
 );
 
+// Collision effect: flash and particle burst
+let collisionEffects = [];
+function spawnCollisionEffect(x, y, color) {
+  for (let i = 0; i < 18; i++) {
+    const angle = (i / 18) * 2 * Math.PI;
+    const speed = 2 + Math.random() * 2;
+    collisionEffects.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      alpha: 1,
+      color
+    });
+  }
+}
+function drawCollisionEffects(ctx) {
+  for (let eff of collisionEffects) {
+    ctx.save();
+    ctx.globalAlpha = eff.alpha;
+    ctx.beginPath();
+    ctx.arc(eff.x, eff.y, 3, 0, 2 * Math.PI);
+    ctx.fillStyle = eff.color;
+    ctx.fill();
+    ctx.restore();
+  }
+}
+function updateCollisionEffects() {
+  for (let eff of collisionEffects) {
+    eff.x += eff.vx;
+    eff.y += eff.vy;
+    eff.alpha -= 0.04;
+  }
+  collisionEffects = collisionEffects.filter(eff => eff.alpha > 0);
+}
+
 // Update the simulation: compute forces and update positions of all bodies
 function update() {
   // Loop through each body and compute gravitational acceleration
@@ -234,10 +312,17 @@ function update() {
       if (distance < (bodies[i].radius + bodies[j].radius)) {
         // Merge bodies[i] and bodies[j]
         const newBody = mergeBodies(bodies[i], bodies[j]);
+        // Calculate collision point in world coordinates
+        const collisionWorldX = (bodies[i].x + bodies[j].x) / 2;
+        const collisionWorldY = (bodies[i].y + bodies[j].y) / 2;
+        // Convert to screen coordinates (taking into account barycenter translation)
+        const collisionScreenX = collisionWorldX + (canvas.width / 2 - displayBarycenterX);
+        const collisionScreenY = collisionWorldY + (canvas.height / 2 - displayBarycenterY);
+        // Spawn collision effect at correct screen position
+        spawnCollisionEffect(collisionScreenX, collisionScreenY, newBody.color);
         // Remove colliding bodies from the array
         bodies.splice(j, 1);
         bodies.splice(i, 1);
-        // Add the merged body
         bodies.push(newBody);
         // Restart checking for collisions since bodies array changed
         i = -1;
@@ -320,6 +405,7 @@ function draw() {
   }
   // Restore context to return to screen coordinates.
   ctx.restore();
+  drawCollisionEffects(ctx);
 }
 
 // Main animation loop: update physics and redraw the scene
@@ -329,9 +415,20 @@ function loop() {
     simTime += 0.016 * timeRate; // Approximate frame time
   }
   draw();
+  updateCollisionEffects();
+
   // Update stats
+  const totalMass = bodies.reduce((sum, b) => sum + b.mass, 0);
+  const avgSpeed = bodies.length ? (bodies.reduce((sum, b) => sum + Math.hypot(b.vx, b.vy), 0) / bodies.length).toFixed(2) : 0;
   document.getElementById("bodiesCount").textContent = `Bodies: ${bodies.length}`;
   document.getElementById("simTime").textContent = `Time: ${simTime.toFixed(1)}s`;
+  if (!document.getElementById("extraStats")) {
+    const stats = document.getElementById("stats");
+    const span = document.createElement("span");
+    span.id = "extraStats";
+    stats.appendChild(span);
+  }
+  document.getElementById("extraStats").textContent = ` | Total Mass: ${Math.round(totalMass)} | Avg Speed: ${avgSpeed}`;
   requestAnimationFrame(loop);
 }
 loop();
