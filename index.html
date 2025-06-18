@@ -1,63 +1,129 @@
 <!DOCTYPE html>
-<html> 
-  <head>
-    <meta charset="utf-8" />
-    <title>Gravity Simulation</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div id="container">
-      <canvas id="canvas"></canvas>
-      <div id="menu" class="menu">
-        <div id="controls">
-          <div>
-            <button id="clearBtn" title="Clear canvas and reset simulation">Clear</button>
-          </div>
-          <div>
-            <label>
-              Time Rate:
-              <input id="timeRate" type="range" min="0.1" max="10" step="0.1" value="1" />
-              <span id="timeRateValue">1</span>
-            </label>
-          </div>
-          <div>
-            <label>
-              Body Mass:
-              <input id="massInput" type="range" min="10" max="1000" step="10" value="50" />
-              <span id="massValue">50</span>
-            </label>
-          </div>
-          <div>
-            <label>
-              Body Color:
-              <input id="colorInput" type="color" value="#ffffff" />
-            </label>
-          </div>
-          <div>
-            <label>
-              Trail Length:
-              <input id="trailLength" type="range" min="10" max="500" step="10" value="100" />
-              <span id="trailLengthValue">100</span>
-            </label>
-          </div>
-          <div>
-            <button id="pauseBtn" title="Pause or resume the simulation">Pause</button>
-          </div>
-          <div>
-            <label>
-              <input id="gridToggle" type="checkbox" checked /> Show Grid
-            </label>
-          </div>
-        </div>
-        <div id="stats" class="stats">
-          <span id="bodiesCount">Bodies: 0</span> |
-          <span id="simTime">Time: 0.0s</span>
-          <span id="extraStats"></span>
-          <span class="legend"><span class="arrow"></span>Velocity</span>
-        </div>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes Projets de Code</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #272822;
+      --text-color: #F8F8F2;
+      --primary-color: #A6E22E;
+      --accent-color: #66D9EF;
+      --card-bg: #3E3D32;
+      --card-shadow: rgba(0, 0, 0, 0.5);
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      line-height: 1.6;
+    }
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .hero {
+      text-align: center;
+      padding: 100px 20px;
+    }
+    .hero h1 {
+      font-size: 3em;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    .hero p {
+      font-size: 1.25em;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .projects {
+      padding: 50px 20px;
+    }
+    .projects h2 {
+      font-size: 2em;
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .projects-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px var(--card-shadow);
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+    }
+    .card h3 {
+      margin-top: 0;
+      color: var(--accent-color);
+    }
+    .card p {
+      flex-grow: 1;
+    }
+    .card a {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      border-top: 1px solid #444;
+    }
+    @media (max-width: 700px) {
+      .projects-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .card {
+        width: 100%;
+        max-width: 350px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>Bienvenue sur ma page de projets</h1>
+    <p>Cette page est dédiée à la présentation de mes réalisations personnelles en programmation.</p>
+  </header>
+
+  <section class="projects">
+    <h2>Projets</h2>
+    <div class="projects-container">
+      <div class="card">
+        <h3>Simulation de Gravité</h3>
+        <p>Une simulation en JavaScript utilisant le <code>&lt;canvas&gt;</code> HTML5 pour modéliser la gravité et les forces attractives.</p>
+        <p>Inspiré de <a href="https://www.testtubegames.com/gravity.html" target="_blank">ce projet</a>.</p>
+        <a href="gravity-sim/index.html">Voir le projet</a>
       </div>
-      <button id="menuBtn" class="menu-btn" title="Toggle Menu">Menu</button>
     </div>
-    <script src="simulation.js"></script>
-  </body>
+  </section>
+
+  <footer>
+    <p>
+      <a href="https://github.com/votreprofil" target="_blank">GitHub</a></p>
+  </footer>
+</body>
 </html>
