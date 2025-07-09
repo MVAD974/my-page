@@ -29,16 +29,16 @@ body {
   bottom: 0;
   transform: translateX(-50%);
   width: auto;
-  min-width: 340px;
+  min-width: 600px;
   max-width: 95vw;
-  background: rgba(0, 0, 0, 0.82);
+  background: rgba(0, 0, 0, 0.85);
   color: #fff;
-  text-align: center;
-  padding: 18px 30px 18px 30px;
+  text-align: left;
+  padding: 20px 25px;
   box-sizing: border-box;
   display: flex;
-  justify-content: center;
-  gap: 24px;
+  justify-content: space-between;
+  gap: 30px;
   flex-wrap: wrap;
   border-radius: 14px 14px 0 0;
   box-shadow: 0 -2px 16px 0 rgba(0,0,0,0.18);
@@ -46,15 +46,35 @@ body {
   z-index: 100;
 }
 
-/* Style for each group of controls */
-#controls > div {
-  background: none;
-  padding: 0 8px;
-  border-radius: 0;
-  box-shadow: none;
-  min-width: 120px;
-  margin: 0 2px;
+/* Control sections */
+.control-section {
+  flex: 1;
+  min-width: 160px;
+  margin: 0;
 }
+
+.control-section h3 {
+  font-size: 14px;
+  color: #4af;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(68, 170, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.control-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.control-item {
+  margin-bottom: 12px;
+}
+
+
 
 /* Style for each label and its input */
 label {
@@ -65,64 +85,99 @@ label {
 
 /* Style for sliders */
 input[type="range"] {
-  width: 120px;
+  width: 100px;
   background: #444;
-  height: 7px;
-  border-radius: 5px;
+  height: 6px;
+  border-radius: 3px;
   outline: none;
-  margin-top: 6px;
-  margin-bottom: 2px;
+  margin: 4px 8px 0 0;
+  display: inline-block;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border: 2px solid #888;
-  box-shadow: 0 2px 6px #0002;
+  width: 14px;
+  height: 14px;
+  background: #4af;
+  border: 1px solid #888;
+  box-shadow: 0 1px 4px #0002;
+  border-radius: 50%;
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
-  background: #fff;
+  width: 13px;
+  height: 13px;
+  background: #4af;
   border-radius: 50%;
   cursor: pointer;
+  border: 1px solid #888;
 }
 
 /* Style for the color picker */
 input[type="color"] {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 28px;
   border: 1px solid #888;
-  border-radius: 6px;
-  margin-top: 6px;
+  border-radius: 4px;
+  margin: 4px 0;
   box-shadow: none;
+  cursor: pointer;
+}
+
+/* Style for checkboxes */
+input[type="checkbox"] {
+  accent-color: #4af;
+  margin-right: 8px;
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+/* Style for buttons */
+button {
+  background: #333;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+button:hover {
+  background: #444;
+  border-color: #666;
 }
 
 /* Style for the value display */
 span {
-  margin-top: 4px;
-  font-size: 13px;
-  color: #bbb;
+  margin-left: 4px;
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 600;
 }
 
 /* Responsive adjustments for smaller screens */
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   #controls {
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     min-width: 90vw;
-    padding: 10px 2vw;
+    padding: 15px 20px;
     left: 50%;
     bottom: 0;
     transform: translateX(-50%);
     border-radius: 10px 10px 0 0;
   }
 
-  #controls > div {
+  .control-section {
     min-width: 100%;
-    padding: 8px 2vw;
+  }
+
+  .control-group {
+    flex-direction: column;
+    gap: 6px;
   }
 
   .menu {
@@ -170,21 +225,43 @@ span {
   bottom: 24px;
   left: 24px;
   right: auto;
-  background: #333;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
   color: #fff;
   border: none;
-  border-radius: 50%;
-  width: 54px;
-  height: 54px;
+  border-radius: 12px;
+  width: 60px;
+  height: 60px;
   cursor: pointer;
-  font-size: 20px;
-  box-shadow: 0 2px 12px #0002;
-  transition: background 0.2s, box-shadow 0.2s;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .menu-btn:hover {
-  background: #444;
-  box-shadow: 0 4px 18px #0004;
+  background: linear-gradient(135deg, #5ba0f2, #4a90e2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+}
+
+.menu-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+.menu-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.menu-btn:hover svg {
+  transform: scale(1.1);
 }
 
 button#clearBtn {
@@ -192,17 +269,18 @@ button#clearBtn {
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
 button#clearBtn:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .stats {
@@ -249,12 +327,12 @@ button#clearBtn:hover {
 }
 
 #pauseBtn {
-  background: #222;
+  background: #2c5aa0;
   color: #fff;
-  border: 1px solid #555;
-  border-radius: 8px;
-  padding: 8px 22px;
-  font-size: 1em;
+  border: 1px solid #3a6db5;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   box-shadow: none;
@@ -262,7 +340,7 @@ button#clearBtn:hover {
 }
 
 #pauseBtn:hover {
-  background: #444;
+  background: #3a6db5;
 }
 
 #gridToggle {

@@ -27,6 +27,8 @@ let trailOpacity = 0.05; // Opacity for the trail effect
 let maxTrailLength = 100; // Default maximum trail length
 let isPaused = false; // Pause state
 let showGrid = true; // Grid toggle
+let showVelocityArrows = true; // Velocity arrows toggle
+let showMassNumbers = true; // Mass numbers toggle
 let simTime = 0; // Simulation time in seconds
 
 // Update simulation parameters from controls
@@ -68,43 +70,47 @@ class Body {
     ctx.fill();
     ctx.shadowBlur = 0;
     // Draw velocity vector as an arrow if speed is big enough
-    const vScale = 40; // Make the arrow even longer
-    const speed = Math.hypot(this.vx, this.vy);
-    if (speed > 0.2) { // Only draw if velocity is significant
-      const vx = this.vx * vScale;
-      const vy = this.vy * vScale;
-      const fromX = this.x;
-      const fromY = this.y;
-      const toX = this.x + vx;
-      const toY = this.y + vy;
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(fromX, fromY);
-      ctx.lineTo(toX, toY);
-      ctx.strokeStyle = '#0ff';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([4, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      // Draw arrowhead
-      const angle = Math.atan2(vy, vx);
-      const headlen = 10;
-      ctx.beginPath();
-      ctx.moveTo(toX, toY);
-      ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 7), toY - headlen * Math.sin(angle - Math.PI / 7));
-      ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 7), toY - headlen * Math.sin(angle + Math.PI / 7));
-      ctx.lineTo(toX, toY);
-      ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 7), toY - headlen * Math.sin(angle - Math.PI / 7));
-      ctx.strokeStyle = '#0ff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.restore();
+    if (showVelocityArrows) {
+      const vScale = 40; // Make the arrow even longer
+      const speed = Math.hypot(this.vx, this.vy);
+      if (speed > 0.2) { // Only draw if velocity is significant
+        const vx = this.vx * vScale;
+        const vy = this.vy * vScale;
+        const fromX = this.x;
+        const fromY = this.y;
+        const toX = this.x + vx;
+        const toY = this.y + vy;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.strokeStyle = '#0ff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // Draw arrowhead
+        const angle = Math.atan2(vy, vx);
+        const headlen = 10;
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 7), toY - headlen * Math.sin(angle - Math.PI / 7));
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 7), toY - headlen * Math.sin(angle + Math.PI / 7));
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 7), toY - headlen * Math.sin(angle - Math.PI / 7));
+        ctx.strokeStyle = '#0ff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
     }
     // Draw label (mass)
-    ctx.font = 'bold 13px Segoe UI, Arial';
-    ctx.fillStyle = '#fff';
-    ctx.textAlign = 'center';
-    ctx.fillText(Math.round(this.mass), this.x, this.y - this.radius - 8);
+    if (showMassNumbers) {
+      ctx.font = 'bold 13px Segoe UI, Arial';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.fillText(Math.round(this.mass), this.x, this.y - this.radius - 8);
+    }
   }
 
   // Draw the trail as a line
@@ -508,5 +514,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const gridToggle = document.getElementById("gridToggle");
   gridToggle.addEventListener("change", (e) => {
     showGrid = e.target.checked;
+  });
+
+  // Add event listeners for new display toggles
+  const velocityToggle = document.getElementById("velocityToggle");
+  velocityToggle.addEventListener("change", (e) => {
+    showVelocityArrows = e.target.checked;
+    // Update velocity legend visibility
+    const velocityLegend = document.getElementById("velocityLegend");
+    velocityLegend.style.display = showVelocityArrows ? "inline-flex" : "none";
+  });
+
+  const massToggle = document.getElementById("massToggle");
+  massToggle.addEventListener("change", (e) => {
+    showMassNumbers = e.target.checked;
   });
 });
